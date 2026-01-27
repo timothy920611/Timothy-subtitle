@@ -59,7 +59,6 @@
                 'https://api.allorigins.win/raw?url='
             ];
 
-            // Helper: Clean VTT content
             const cleanVttText = (vttContent) => {
                 if (!vttContent) return '';
                 const txt = document.createElement("textarea");
@@ -71,19 +70,13 @@
                 lines.forEach(line => {
                 let text = line.trim();
                 if (!text) return;
-                // Filter out VTT structural lines
                 if (text.startsWith('WEBVTT') || text.startsWith('NOTE') || text.startsWith('STYLE')) return;
-                // Filter out timestamps (e.g. 00:00:10.000 --> 00:00:15.000)
                 if (text.includes('-->')) return; 
-                // Filter out sequence numbers
                 if (/^\d+$/.test(text)) return; 
 
-                // Remove HTML tags
                 text = text.replace(/<\/?[^>]+(>|$)/g, "");
-                // Decode HTML entities
                 text = decode(text);
                 
-                // Deduplicate consecutive lines
                 if (cleanLines.length > 0 && cleanLines[cleanLines.length - 1] === text) return;
                 cleanLines.push(text);
                 });
@@ -91,18 +84,15 @@
                 return cleanLines.join('\n');
             };
 
-            // Helper: Parse URL for ID and Language
             const parseUrlInfo = (inputUrl) => {
                 try {
                 const info = { id: null, lang: 'CH' };
-                // Add https if missing to parse correctly
                 const u = new URL(inputUrl.startsWith('http') ? inputUrl : `https://${inputUrl}`);
                 
                 if (u.searchParams.get('lank')) info.id = u.searchParams.get('lank');
                 if (u.searchParams.get('wtlocale')) info.lang = u.searchParams.get('wtlocale');
 
                 if (!info.id) {
-                    // Try finding "pub-xxx" pattern
                     const match = inputUrl.match(/(pub-[a-zA-Z0-9-_]+)/i);
                     if (match) info.id = match[1];
                 }
@@ -131,16 +121,11 @@
                 setTargetId(id);
                 setTargetLang(lang);
 
-                // JW Mediator API URL
                 const apiUrl = `https://b.jw-cdn.org/apis/mediator/v1/media-items/${lang}/${id}?clientType=www`;
                 
                 try {
-                // Try first proxy
                 let response = await fetch(PROXIES[0] + encodeURIComponent(apiUrl));
-                
-                // If first proxy fails, try second
                 if (!response.ok) {
-                    console.log('Proxy 1 failed, trying Proxy 2...');
                     response = await fetch(PROXIES[1] + encodeURIComponent(apiUrl));
                 }
                 
@@ -161,7 +146,6 @@
                 const files = data.media?.[0]?.files || [];
                 const title = data.media?.[0]?.title || targetId;
                 
-                // Find subtitle file
                 const subFile = files.find(f => f.label === 'subtitles' || f.subtitles?.url);
                 
                 if (!subFile) {
@@ -171,7 +155,6 @@
                 const vttUrl = subFile.subtitles?.url || subFile.url;
                 setFoundVttUrl(vttUrl);
 
-                // Try to auto-download VTT
                 setStatus('auto_fetching'); 
                 try {
                     let response = await fetch(PROXIES[0] + encodeURIComponent(vttUrl));
@@ -197,7 +180,6 @@
                 }
             };
 
-            // Manual Mode Handlers
             const handleManualJsonSubmit = () => {
                 try {
                 const json = JSON.parse(manualInput);
@@ -372,10 +354,12 @@
 
                         <div className="p-4 bg-slate-50">
                         <div className="text-sm text-slate-500 mb-2 font-medium truncate">{result.title}</div>
+                        
+                        {/* 這裡調整了高度 (h-[65vh]) 和行距 (leading-relaxed) */}
                         <textarea
                             readOnly
                             value={result.clean}
-                            className="w-full h-[50vh] p-4 bg-white border border-slate-200 rounded-xl text-slate-800 text-lg leading-loose focus:outline-none resize-none shadow-inner"
+                            className="w-full h-[65vh] p-4 bg-white border border-slate-200 rounded-xl text-slate-800 text-lg leading-relaxed focus:outline-none resize-y shadow-inner"
                         />
                         
                         <button
