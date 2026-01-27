@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JW 字幕提取器</title>
+    
+    <!-- React & Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- App Icon -->
+    <link rel="apple-touch-icon" href="https://assetsnffrgf-a.akamaihd.net/assets/m/802013146/univ/art/802013146_univ_sqr_xl.jpg">
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // SVG Icons
+        const Icons = {
+            ShieldCheck: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>,
+            Loader2: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+            Search: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+            AlertTriangle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+            ExternalLink: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
+            ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
+            FileText: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>,
+            RefreshCw: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
+            Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+            Clipboard: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        };
+
+        const App = () => {
+            const [url, setUrl] = React.useState('');
+            const [loading, setLoading] = React.useState(false);
+            const [status, setStatus] = React.useState('idle'); 
+            const [errorMsg, setErrorMsg] = React.useState('');
+            const [result, setResult] = React.useState(null);
+            const [copyState, setCopyState] = React.useState(false);
+            
+            const [manualInput, setManualInput] = React.useState('');
+            const [targetId, setTargetId] = React.useState('');
+            const [targetLang, setTargetLang] = React.useState('CH');
+            const [foundVttUrl, setFoundVttUrl] = React.useState('');
+
+            const PROXIES = [
+                'https://corsproxy.io/?',
+                'https://api.allorigins.win/raw?url='
+            ];
+
+            // Helper: Clean VTT content
+            const cleanVttText = (vttContent) => {
+                if (!vttContent) return '';
+                const txt = document.createElement("textarea");
+                const decode = (str) => { txt.innerHTML = str; return txt.value; };
+
+                const lines = vttContent.split('\n');
+                let cleanLines = [];
+                
+                lines.forEach(line => {
+                let text = line.trim();
+                if (!text) return;
+                // Filter out VTT structural lines
+                if (text.startsWith('WEBVTT') || text.startsWith('NOTE') || text.startsWith('STYLE')) return;
+                // Filter out timestamps (e.g. 00:00:10.000 --> 00:00:15.000)
+                if (text.includes('-->')) return; 
+                // Filter out sequence numbers
+                if (/^\d+$/.test(text)) return; 
+
+                // Remove HTML tags
+                text = text.replace(/<\/?[^>]+(>|$)/g, "");
+                // Decode HTML entities
+                text = decode(text);
+                
+                // Deduplicate consecutive lines
+                if (cleanLines.length > 0 && cleanLines[cleanLines.length - 1] === text) return;
+                cleanLines.push(text);
+                });
+
+                return cleanLines.join('\n');
+            };
+
+            // Helper: Parse URL for ID and Language
+            const parseUrlInfo = (inputUrl) => {
+                try {
+                const info = { id: null, lang: 'CH' };
+                // Add https if missing to parse correctly
+                const u = new URL(inputUrl.startsWith('http') ? inputUrl : `https://${inputUrl}`);
+                
+                if (u.searchParams.get('lank')) info.id = u.searchParams.get('lank');
+                if (u.searchParams.get('wtlocale')) info.lang = u.searchParams.get('wtlocale');
+
+                if (!info.id) {
+                    // Try finding "pub-xxx" pattern
+                    const match = inputUrl.match(/(pub-[a-zA-Z0-9-_]+)/i);
+                    if (match) info.id = match[1];
+                }
+                return info;
+                } catch (e) {
+                return { id: null, lang: 'CH' };
+                }
+            };
+
+            const handleStart = async () => {
+                if (!url) return;
+                setLoading(true);
+                setErrorMsg('');
+                setResult(null);
+                setStatus('auto_fetching');
+                setManualInput('');
+
+                const { id, lang } = parseUrlInfo(url);
+                
+                if (!id) {
+                setLoading(false);
+                setErrorMsg('無法識別影片 ID。請確認網址包含 "pub-..." 或 "lank=..."。');
+                return;
+                }
+
+                setTargetId(id);
+                setTargetLang(lang);
+
+                // JW Mediator API URL
+                const apiUrl = `https://b.jw-cdn.org/apis/mediator/v1/media-items/${lang}/${id}?clientType=www`;
+                
+                try {
+                // Try first proxy
+                let response = await fetch(PROXIES[0] + encodeURIComponent(apiUrl));
+                
+                // If first proxy fails, try second
+                if (!response.ok) {
+                    console.log('Proxy 1 failed, trying Proxy 2...');
+                    response = await fetch(PROXIES[1] + encodeURIComponent(apiUrl));
+                }
+                
+                if (!response.ok) throw new Error('Auto fetch failed');
+
+                const data = await response.json();
+                processJsonData(data);
+
+                } catch (err) {
+                console.warn('Auto fetch failed, switching to manual mode', err);
+                setLoading(false);
+                setStatus('manual_json_needed');
+                }
+            };
+
+            const processJsonData = async (data) => {
+                try {
+                const files = data.media?.[0]?.files || [];
+                const title = data.media?.[0]?.title || targetId;
+                
+                // Find subtitle file
+                const subFile = files.find(f => f.label === 'subtitles' || f.subtitles?.url);
+                
+                if (!subFile) {
+                    throw new Error('此影片資料中找不到字幕檔 (Subtitles not found in JSON).');
+                }
+
+                const vttUrl = subFile.subtitles?.url || subFile.url;
+                setFoundVttUrl(vttUrl);
+
+                // Try to auto-download VTT
+                setStatus('auto_fetching'); 
+                try {
+                    let response = await fetch(PROXIES[0] + encodeURIComponent(vttUrl));
+                    if (!response.ok) response = await fetch(PROXIES[1] + encodeURIComponent(vttUrl));
+                    
+                    if (!response.ok) throw new Error('VTT fetch failed');
+                    
+                    const text = await response.text();
+                    setResult({ clean: cleanVttText(text), title });
+                    setStatus('success');
+                    setLoading(false);
+
+                } catch (err) {
+                    console.warn('VTT fetch failed, switching to manual mode');
+                    setLoading(false);
+                    setStatus('manual_vtt_needed');
+                }
+
+                } catch (err) {
+                setLoading(false);
+                setErrorMsg('解析資料失敗：' + err.message);
+                setStatus('manual_json_needed');
+                }
+            };
+
+            // Manual Mode Handlers
+            const handleManualJsonSubmit = () => {
+                try {
+                const json = JSON.parse(manualInput);
+                processJsonData(json);
+                } catch (e) {
+                setErrorMsg('貼上的內容格式錯誤，請確保您複製了完整的 JSON 文字。');
+                }
+            };
+
+            const handleManualVttSubmit = () => {
+                if (!manualInput) return;
+                setResult({ clean: cleanVttText(manualInput), title: 'Manual Extract' });
+                setStatus('success');
+            };
+
+            const copyResult = () => {
+                if (!result) return;
+                const textArea = document.createElement("textarea");
+                textArea.value = result.clean;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                setCopyState(true);
+                setTimeout(() => setCopyState(false), 2000);
+            };
+
+            const getDirectApiUrl = () => {
+                return `https://b.jw-cdn.org/apis/mediator/v1/media-items/${targetLang}/${targetId}?clientType=www`;
+            };
+
+            return (
+                <div className="min-h-screen pb-10">
+                <div className="bg-slate-800 text-white p-5 shadow-md sticky top-0 z-10">
+                    <div className="flex items-center gap-3">
+                    <div className="text-emerald-400"><Icons.ShieldCheck /></div>
+                    <div>
+                        <h1 className="text-xl font-bold">JW 字幕提取</h1>
+                        <p className="text-xs text-slate-400">個人專屬版</p>
+                    </div>
+                    </div>
+                </div>
+
+                <div className="p-4 max-w-lg mx-auto space-y-6">
+
+                    {(status === 'idle' || status === 'auto_fetching' || status === 'error') && (
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <label className="block text-sm font-bold text-slate-600 mb-2">輸入影片網址 (Finder 或 長連結)</label>
+                        <input
+                        type="text"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        placeholder="https://..."
+                        className="w-full p-4 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none mb-4"
+                        />
+                        
+                        <button
+                        onClick={handleStart}
+                        disabled={loading || !url}
+                        className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex justify-center items-center gap-2 transition-colors disabled:bg-slate-300"
+                        >
+                        {loading ? <div className="animate-spin"><Icons.Loader2 className="w-6 h-6" /></div> : <Icons.Search />}
+                        {loading ? '自動連線中...' : '開始提取'}
+                        </button>
+
+                        {errorMsg && (
+                        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm flex gap-2">
+                            <div className="shrink-0 mt-0.5"><Icons.AlertTriangle /></div>
+                            {errorMsg}
+                        </div>
+                        )}
+                    </div>
+                    )}
+
+                    {status === 'manual_json_needed' && (
+                    <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-amber-100">
+                        <div className="flex items-center gap-2 text-amber-700 font-bold mb-4">
+                        <Icons.AlertTriangle />
+                        自動連線失敗，請協助手動獲取
+                        </div>
+                        
+                        <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-700 mb-6">
+                        <li>
+                            <p className="mb-2">點擊下方按鈕，在新視窗打開資料連結：</p>
+                            <a 
+                            href={getDirectApiUrl()} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition-colors"
+                            >
+                            <Icons.ExternalLink /> 打開資料連結
+                            </a>
+                        </li>
+                        <li>在新視窗中，「全選」並「複製」內容。</li>
+                        <li>回到這裡，將內容貼到下方：</li>
+                        </ol>
+
+                        <textarea
+                        value={manualInput}
+                        onChange={(e) => setManualInput(e.target.value)}
+                        placeholder="在此貼上您複製的 JSON 內容..."
+                        className="w-full h-32 p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-amber-500 outline-none mb-4"
+                        />
+
+                        <button
+                        onClick={handleManualJsonSubmit}
+                        disabled={!manualInput}
+                        className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold flex justify-center items-center gap-2"
+                        >
+                        <Icons.ArrowRight /> 下一步
+                        </button>
+                    </div>
+                    )}
+
+                    {status === 'manual_vtt_needed' && (
+                    <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-100">
+                        <div className="flex items-center gap-2 text-blue-700 font-bold mb-4">
+                        <Icons.FileText />
+                        找到字幕了！最後一步
+                        </div>
+                        
+                        <p className="text-sm text-slate-600 mb-4">
+                        請協助打開字幕檔並複製內容：
+                        </p>
+
+                        <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-700 mb-6">
+                        <li>
+                            <a 
+                            href={foundVttUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg font-bold hover:bg-emerald-200 transition-colors break-all"
+                            >
+                            <Icons.ExternalLink /> 點擊打開字幕檔
+                            </a>
+                        </li>
+                        <li>「全選」並「複製」內容。</li>
+                        <li>貼到下面：</li>
+                        </ol>
+
+                        <textarea
+                        value={manualInput}
+                        onChange={(e) => setManualInput(e.target.value)}
+                        placeholder="WEBVTT..."
+                        className="w-full h-40 p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-blue-500 outline-none mb-4"
+                        />
+
+                        <button
+                        onClick={handleManualVttSubmit}
+                        disabled={!manualInput}
+                        className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold flex justify-center items-center gap-2"
+                        >
+                        <Icons.RefreshCw /> 開始清理字幕
+                        </button>
+                    </div>
+                    )}
+
+                    {status === 'success' && result && (
+                    <div className="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden">
+                        <div className="bg-emerald-500 text-white p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Icons.Check />
+                            <h3 className="font-bold text-lg">大功告成！</h3>
+                        </div>
+                        <button 
+                            onClick={() => { setStatus('idle'); setUrl(''); setResult(null); }}
+                            className="text-xs bg-emerald-600 hover:bg-emerald-700 px-3 py-1 rounded-full transition-colors"
+                        >
+                            重設
+                        </button>
+                        </div>
+
+                        <div className="p-4 bg-slate-50">
+                        <div className="text-sm text-slate-500 mb-2 font-medium truncate">{result.title}</div>
+                        <textarea
+                            readOnly
+                            value={result.clean}
+                            className="w-full h-[50vh] p-4 bg-white border border-slate-200 rounded-xl text-slate-800 text-lg leading-loose focus:outline-none resize-none shadow-inner"
+                        />
+                        
+                        <button
+                            onClick={copyResult}
+                            className={`mt-4 w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm ${
+                            copyState 
+                                ? 'bg-emerald-600 text-white' 
+                                : 'bg-slate-800 text-white active:scale-[0.95]'
+                            }`}
+                        >
+                            {copyState ? <Icons.Check /> : <Icons.Clipboard />}
+                            {copyState ? '複製成功' : '複製全部文字'}
+                        </button>
+                        </div>
+                    </div>
+                    )}
+                </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
