@@ -424,13 +424,13 @@
                                         AI 助手
                                     </div>
                                     <button onClick={() => callGemini('summary')} className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors">
-                                        <Icons.FileText className="w-4 h-4"/> 重點摘要
+                                        <Icons.FileText className="w-4 h-4"/> 大綱
                                     </button>
                                     <button onClick={() => callGemini('quiz')} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors">
-                                        <Icons.Brain className="w-4 h-4"/> 思考問題
+                                        <Icons.Brain className="w-4 h-4"/> 比喻
                                     </button>
                                     <button onClick={() => callGemini('action')} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-sm font-medium transition-colors">
-                                        <Icons.Lightbulb className="w-4 h-4"/> 行動建議
+                                        <Icons.Lightbulb className="w-4 h-4"/> 行動
                                     </button>
                                     <div className="ml-auto text-xs text-slate-400 font-mono hidden lg:block truncate max-w-[200px]">{result.title}</div>
                                 </div>
@@ -443,7 +443,7 @@
                                         {aiStatus === 'loading' && (
                                             <div className="flex items-center justify-center py-4 text-purple-600 gap-3">
                                                 <Icons.Loader2 className="animate-spin w-5 h-5" />
-                                                <p className="text-sm font-medium">Gemini 隨機使用 Key 分析中...</p>
+                                                <p className="text-sm font-medium"> 分析中...🐣 🐥 🐓</p>
                                             </div>
                                         )}
                                         {aiStatus === 'error' && (
