@@ -247,11 +247,11 @@
                 const context = result.clean.substring(0, 30000);
 
                 if (type === 'summary') {
-                    prompt = `請扮演一位專業的研讀助理，為以下這段影片的字幕內容提供一份繁體中文的「重點摘要」。\n\n要求：\n1. 使用 Markdown 格式。\n2. 列出 3-5 個主要論點。\n3. 語氣要鼓勵且正面。\n\n內容：\n${context}`;
+                    prompt = `為以下這段影片的字幕內容提供一份繁體中文的「大綱」，包括：引言、主要論點、主要論點下的次要論點、使用的經文、如果可以幫我在論點下列出有使用到的耶和華見證人出版物名稱，沒有就不需要。\n\n要求：\n1. 使用 Markdown 格式。\n2. 只需列出論點了經文、來源，其他不用。\n3. 越精簡越好，不需要增加任何內容。\n\n內容：\n${context}`;
                 } else if (type === 'quiz') {
-                    prompt = `請根據以下內容，設計 3-5 個用於「個人研讀」或「小組討論」的思考問題。\n\n要求：\n1. 問題要能引發深層思考，而不僅僅是回憶事實。\n2. 附上每個問題對應的簡短參考答案或思路。\n3. 使用繁體中文 Markdown 格式。\n\n內容：\n${context}`;
+                    prompt = `如果影片有提供比喻，幫我完整截取出來，如果沒有就告訴我沒有找到。\n\n要求：\n1. 截取比喻片段。\n2. 簡單提到上下文及比喻目的。\n3. 使用繁體中文 Markdown 格式。\n\n內容：\n${context}`;
                 } else if (type === 'action') {
-                    prompt = `請根據以下內容，提供 3 點具體的「生活應用建議」(Action Items)。\n\n要求：\n1. 針對日常生活、工作或家庭。\n2. 具體且可執行。\n3. 使用繁體中文 Markdown 格式。\n\n內容：\n${context}`;
+                    prompt = `如果字幕內容有鼓勵聽者採取行動，請幫我列出來。\n\n要求：\n1. 條列式。\n2. 具體且可執行。\n3. 使用繁體中文 Markdown 格式。\n\n內容：\n${context}`;
                 }
 
                 try {
@@ -422,10 +422,10 @@
                                         AI 助手
                                     </div>
                                     <button onClick={() => callGemini('summary')} className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors">
-                                        <Icons.FileText className="w-4 h-4"/> 重點摘要
+                                        <Icons.FileText className="w-4 h-4"/> 大綱
                                     </button>
                                     <button onClick={() => callGemini('quiz')} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors">
-                                        <Icons.Brain className="w-4 h-4"/> 思考問題
+                                        <Icons.Brain className="w-4 h-4"/> 比喻截取
                                     </button>
                                     <button onClick={() => callGemini('action')} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg text-sm font-medium transition-colors">
                                         <Icons.Lightbulb className="w-4 h-4"/> 行動建議
