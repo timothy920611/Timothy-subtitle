@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的工具箱 | 工具總覽</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        /* 自定義背景動畫或網格 */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen relative overflow-x-hidden flex flex-col">
+
+    <!-- 背景裝飾 -->
+    <div class="absolute inset-0 bg-grid z-0 pointer-events-none"></div>
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob pointer-events-none"></div>
+    <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000 pointer-events-none"></div>
+
+    <!-- 主要內容區 -->
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center w-full px-6 py-12 md:py-24 max-w-6xl mx-auto">
+        
+        <!-- 標題區塊 -->
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                    開發者工具箱
+                </span>
+            </h1>
+            <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto font-medium">
+                集合了網址擷取、影片字幕處理、文章擷取與 HTML 檔案合併的實用小工具。
+            </p>
+        </header>
+
+        <!-- 卡片網格 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8 w-full">
+            
+            <!-- 專案 1: Take URL -->
+            <a href="https://timothy920611.github.io/Take-URL/" target="_blank" rel="noopener noreferrer" 
+               class="group block bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </div>
+                <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">Take URL</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    網址擷取工具。協助您快速擷取、整理與分析網頁連結，提升日常工作與資料收集效率。
+                </p>
+            </a>
+
+            <!-- 專案 2: Multi Video Subtitle -->
+            <a href="https://timothy920611.github.io/Multi-Video-Sutitle/" target="_blank" rel="noopener noreferrer" 
+               class="group block bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-purple-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </div>
+                <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-purple-600 transition-colors">多影片字幕工具</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    支援多重影片的字幕處理工具。提供便利的字幕同步、檢視與編輯功能，適合影音創作者使用。
+                </p>
+            </a>
+
+            <!-- 專案 3: Take Article -->
+            <a href="https://timothy920611.github.io/take-article/" target="_blank" rel="noopener noreferrer" 
+               class="group block bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </div>
+                <div class="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-green-600 transition-colors">Take Article</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    文章擷取閱讀器。讓您輕鬆擷取網頁文章的主體內容，提供乾淨無干擾的閱讀體驗與文字提取。
+                </p>
+            </a>
+
+            <!-- 專案 4: Merge HTML File -->
+            <a href="https://timothy920611.github.io/merge-html-file/" target="_blank" rel="noopener noreferrer" 
+               class="group block bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </div>
+                <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-orange-600 transition-colors">HTML 合併工具</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    檔案整併小幫手。能快速將多個 HTML 網頁檔案合併成一個單一檔案，方便分享或封存使用。
+                </p>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="text-center py-8 text-gray-400 text-sm relative z-10 mt-auto">
+        <p>© 2024 Timothy's Projects. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
